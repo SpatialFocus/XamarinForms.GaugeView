@@ -22,9 +22,17 @@ jobs:
         PACKAGE_NAME: SpatialFocus.XamarinForms.GaugeView
         # API key to authenticate with NuGet server
         NUGET_KEY: ${{secrets.NUGET_API_KEY}}
+        # Flag to toggle pushing symbols along with nuget package to the server, disabled by default
+        INCLUDE_SYMBOLS: true
     - name: Persist NuGet artifact
       uses: actions/upload-artifact@v1
       if: ${{steps.publishNuGet.outputs.PACKAGE_NAME != ''}}
       with:
         name: ${{steps.publishNuGet.outputs.PACKAGE_NAME}}
         path: ${{steps.publishNuGet.outputs.PACKAGE_PATH}}
+    - name: Persist SNuGet artifact
+      uses: actions/upload-artifact@v1
+      if: ${{steps.publishNuGet.outputs.SYMBOLS_PACKAGE_NAME != ''}}
+      with:
+        name: ${{steps.publishNuGet.outputs.SYMBOLS_PACKAGE_NAME}}
+        path: ${{steps.publishNuGet.outputs.SYMBOLS_PACKAGE_PATH}}
