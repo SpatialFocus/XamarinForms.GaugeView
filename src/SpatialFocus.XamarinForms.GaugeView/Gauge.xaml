@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+
+<ContentView xmlns="http://xamarin.com/schemas/2014/forms" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+	xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	xmlns:skia="clr-namespace:SkiaSharp.Views.Forms;assembly=SkiaSharp.Views.Forms"
+	xmlns:behaviors="http://prismlibrary.com"
+	xmlns:gaugeView="clr-namespace:SpatialFocus.XamarinForms.GaugeView;assembly=SpatialFocus.XamarinForms.GaugeView"
+	mc:Ignorable="d"
+	x:Class="SpatialFocus.XamarinForms.GaugeView.Gauge">
+	<skia:SKCanvasView>
+		<skia:SKCanvasView.Resources>
+			<gaugeView:SkPaintSurfaceEventArgsConverter x:Key="SkPaintSurfaceEventArgsConverter" />
+		</skia:SKCanvasView.Resources>
+		<skia:SKCanvasView.Behaviors>
+			<behaviors:EventToCommandBehavior EventName="PaintSurface" Command="{Binding PaintCommand}"
+				EventArgsConverter="{StaticResource SkPaintSurfaceEventArgsConverter}" />
+			<gaugeView:SkCanvasViewBehavior InvalidateSurfaceCommand="{Binding InvalidateSurfaceCommand, Mode=OneWayToSource}" />
+		</skia:SKCanvasView.Behaviors>
+	</skia:SKCanvasView>
+</ContentView>

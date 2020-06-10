@@ -1,0 +1,41 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Prism.Forms" Version="7.2.0.1367" />
+    <PackageReference Include="PropertyChanged.Fody" Version="3.2.0" />
+    <PackageReference Include="SkiaSharp.Views.Forms" Version="1.68.0" />
+    <PackageReference Include="Xamarin.Forms" Version="4.6.0.726" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Gauge.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </None>
+  </ItemGroup>
+
+	<PropertyGroup>
+		<Version>0.1.1</Version>
+		<PackageId>SpatialFocus.XamarinForms.GaugeView</PackageId>
+		<Title>Spatial Focus Gauge View for Xamarin Forms</Title>
+		<Description>Display horizontal or vertival gauges in your Xamarin Forms Shell app. Use the predefined Compass or Gradometer gauges for simplicity.</Description>
+		<PackageTags>XamarinForms,View,Compass,Scale</PackageTags>
+		<PackageProjectUrl>https://github.com/SpatialFocus/XamarinForms.GaugeView</PackageProjectUrl>
+		<PackageIcon>icon.png</PackageIcon>
+		<PackageIconUrl>https://raw.githubusercontent.com/SpatialFocus/XamarinForms.GaugeView/master/docs/icon.png</PackageIconUrl>
+		<RepositoryType>git</RepositoryType>
+		<RepositoryUrl>https://github.com/SpatialFocus/XamarinForms.GaugeView.git</RepositoryUrl>
+		<Authors>Dresel,pergerch</Authors>
+		<Company>SpatialFocus</Company>
+		<PackageOutputPath>..\..\.nuget</PackageOutputPath>
+		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<None Include="..\..\docs\icon.png" Pack="true" PackagePath="\" />
+	</ItemGroup>
+
+</Project>
