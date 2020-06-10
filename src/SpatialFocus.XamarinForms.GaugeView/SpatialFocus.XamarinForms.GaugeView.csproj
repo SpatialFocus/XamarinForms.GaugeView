@@ -11,7 +11,7 @@
   </ItemGroup>
 
 	<PropertyGroup>
-		<Version>0.1.7</Version>
+		<Version>0.1.8</Version>
 		<PackageId>SpatialFocus.XamarinForms.GaugeView</PackageId>
 		<Title>Spatial Focus Gauge View for Xamarin Forms</Title>
 		<Description>Display horizontal or vertical gauges in your Xamarin Forms app. Use the predefined Compass or Gradometer gauges for simplicity.</Description>
@@ -28,6 +28,7 @@
 		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
 
 		<EmbedAllSources>true</EmbedAllSources>
+		<EmbedUntrackedSources>true</EmbedUntrackedSources>
 		<IncludeSymbols>true</IncludeSymbols>
 		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
 		<PublishRepositoryUrl>true</PublishRepositoryUrl>
@@ -40,7 +41,10 @@
 	<ItemGroup>
 		<PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All" />
 		<PackageReference Include="Prism.Forms" Version="7.2.0.1367" />
-		<PackageReference Include="PropertyChanged.Fody" Version="3.2.0" />
+		<PackageReference Include="PropertyChanged.Fody" Version="3.2.0">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
 		<PackageReference Include="SkiaSharp.Views.Forms" Version="1.68.0" />
 		<PackageReference Include="Xamarin.Forms" Version="4.6.0.726" />
 	</ItemGroup>
