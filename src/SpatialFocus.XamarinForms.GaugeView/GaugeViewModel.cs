@@ -84,7 +84,7 @@ namespace SpatialFocus.XamarinForms.GaugeView
 						270 => "W",
 						292.5 => "WNW",
 						315 => "NW",
-						3337.5 => "NNW",
+						337.5 => "NNW",
 						_ => null
 					};
 				},
