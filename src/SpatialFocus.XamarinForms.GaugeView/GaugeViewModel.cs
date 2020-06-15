@@ -152,7 +152,7 @@ namespace SpatialFocus.XamarinForms.GaugeView
 		private float CalculateTextSize()
 		{
 			SKRect textBounds = default;
-			TextStyle.MeasureText("NW", ref textBounds);
+			TextStyle.MeasureText("NNW", ref textBounds);
 
 			float textSize = Orientation == GaugeOrientation.Horizontal ? textBounds.Height : textBounds.Width;
 
