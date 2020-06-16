@@ -30,6 +30,8 @@ namespace SpatialFocus.XamarinForms.GaugeView
 
 		public Color Color { get; set; } = Color.DarkSlateGray;
 
+		public Func<double, double, double> DisplayDirectionArrow { get; set; }
+
 		public double DisplayRange { get; set; } = 10;
 
 		public Color HighlightedColor { get; set; } = Color.Red;
@@ -46,6 +48,8 @@ namespace SpatialFocus.XamarinForms.GaugeView
 
 		public double TargetValue { get; set; }
 
+		public GaugeUnit Unit { get; set; } = GaugeUnit.Degrees();
+
 		public double Value { get; set; }
 
 		protected SKPaint HighlightedLineStyle { get; set; }
@@ -58,46 +62,123 @@ namespace SpatialFocus.XamarinForms.GaugeView
 
 		protected SKPaint TextStyle { get; set; }
 
-		public static GaugeViewModel Compass()
+		public static GaugeViewModel Compass(GaugeUnit unit)
 		{
 			return new GaugeViewModel()
 			{
+				Unit = unit,
+				DisplayDirectionArrow = unit.NormalizedDifference,
 				SetLabel = x =>
 				{
-					// TODO: Review
-					double degree = (x + 360) % 360;
+					double degree = (x + unit.Max) % unit.Max;
 
-					return degree switch
+					// ReSharper disable CompareOfFloatsByEqualityOperator
+					if (degree == 0)
 					{
-						0 => "N",
-						22.5 => "NNE",
-						45 => "NE",
-						67.5 => "ENE",
-						90 => "E",
-						112.5 => "ESE",
-						135 => "SE",
-						157.5 => "SSE",
-						180 => "S",
-						202.5 => "SSW",
-						225 => "SW",
-						247.5 => "WSW",
-						270 => "W",
-						292.5 => "WNW",
-						315 => "NW",
-						337.5 => "NNW",
-						_ => null
-					};
+						return "N";
+					}
+
+					if (degree == (1.0 * unit.Max) / 16)
+					{
+						return "NNE";
+					}
+
+					if (degree == (2.0 * unit.Max) / 16)
+					{
+						return "NE";
+					}
+
+					if (degree == (3.0 * unit.Max) / 16)
+					{
+						return "ENE";
+					}
+
+					if (degree == (4.0 * unit.Max) / 16)
+					{
+						return "E";
+					}
+
+					if (degree == (5.0 * unit.Max) / 16)
+					{
+						return "ESE";
+					}
+
+					if (degree == (6.0 * unit.Max) / 16)
+					{
+						return "SE";
+					}
+
+					if (degree == (7.0 * unit.Max) / 16)
+					{
+						return "SSE";
+					}
+
+					if (degree == (8.0 * unit.Max) / 16)
+					{
+						return "S";
+					}
+
+					if (degree == (9.0 * unit.Max) / 16)
+					{
+						return "SSW";
+					}
+
+					if (degree == (10.0 * unit.Max) / 16)
+					{
+						return "SW";
+					}
+
+					if (degree == (11.0 * unit.Max) / 16)
+					{
+						return "WSW";
+					}
+
+					if (degree == (12.0 * unit.Max) / 16)
+					{
+						return "W";
+					}
+
+					if (degree == (13.0 * unit.Max) / 16)
+					{
+						return "WNW";
+					}
+
+					if (degree == (14.0 * unit.Max) / 16)
+					{
+						return "NW";
+					}
+
+					if (degree == (15.0 * unit.Max) / 16)
+					{
+						return "NNW";
+					}
+
+					// ReSharper restore CompareOfFloatsByEqualityOperator
+					return null;
 				},
-				DisplayRange = 20,
+				PartitionSize = unit.Unit == GaugeUnit.UnitEnum.Mils ? 5 : 0.5,
+				DisplayRange = unit.Unit == GaugeUnit.UnitEnum.Mils ? 200 : 20,
 			};
 		}
 
-		public static GaugeViewModel Gradometer()
+		public static GaugeViewModel Gradometer(GaugeUnit unit)
 		{
 			return new GaugeViewModel()
 			{
+				Unit = unit,
 				Orientation = GaugeOrientation.Vertical,
-				SetLabel = x => x % 5 == 0 ? x.ToString("N0", CultureInfo.InvariantCulture) : null,
+				SetLabel = x =>
+				{
+					if (unit.Max > 400)
+					{
+						return x % 100 == 0 ? x.ToString("###0", CultureInfo.InvariantCulture) : null;
+					}
+
+					return x % 5 == 0 ? x.ToString("N0", CultureInfo.InvariantCulture) : null;
+				},
+				PartitionSize = unit.Unit == GaugeUnit.UnitEnum.Mils ? 6.25 : 0.5,
+				PartitionGroupSize = unit.Unit == GaugeUnit.UnitEnum.Mils ? 4 : 5,
+				DisplayRange = unit.Unit == GaugeUnit.UnitEnum.Mils ? 200 : 10,
 			};
 		}
 
@@ -126,6 +207,17 @@ namespace SpatialFocus.XamarinForms.GaugeView
 
 			float textSize = CalculateTextSize();
 
+			double? difference = DisplayDirectionArrow?.Invoke(Value, TargetValue);
+
+			if (difference.HasValue && difference < -DisplayRange / 2)
+			{
+				DrawText(canvas, info.Width - 20, "=>", textSize);
+			}
+			else if (difference.HasValue && difference > DisplayRange / 2)
+			{
+				DrawText(canvas, 20, "<=", textSize);
+			}
+
 			do
 			{
 				DrawPartition(canvas, info, textSize, startValue, endValue, currentValue);
@@ -137,6 +229,10 @@ namespace SpatialFocus.XamarinForms.GaugeView
 			if (startValue <= TargetValue && TargetValue <= endValue)
 			{
 				DrawPartition(canvas, info, textSize, startValue, endValue, TargetValue, true);
+			}
+			else if (startValue <= TargetValue - Unit.Max && TargetValue - Unit.Max <= endValue)
+			{
+				DrawPartition(canvas, info, textSize, startValue, endValue, TargetValue - Unit.Max, true);
 			}
 
 			if (Orientation == GaugeOrientation.Horizontal)
