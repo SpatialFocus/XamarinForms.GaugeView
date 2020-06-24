@@ -182,6 +182,16 @@ namespace SpatialFocus.XamarinForms.GaugeView
 			};
 		}
 
+		protected void OnColorChanged()
+		{
+			LineStyle = new SKPaint { Style = SKPaintStyle.Stroke, Color = Color.ToSKColor(), StrokeWidth = 5 };
+		}
+
+		protected void OnHighlightedColorChanged()
+		{
+			HighlightedLineStyle = new SKPaint { Style = SKPaintStyle.Stroke, Color = HighlightedColor.ToSKColor(), StrokeWidth = 10 };
+		}
+
 		protected void OnValueChanged()
 		{
 			InvalidateSurfaceCommand?.Execute(null);
