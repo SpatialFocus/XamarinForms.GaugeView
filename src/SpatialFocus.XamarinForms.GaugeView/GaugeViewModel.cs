@@ -56,7 +56,7 @@ namespace SpatialFocus.XamarinForms.GaugeView
 
 		protected SKPaint LineStyle { get; set; }
 
-		protected float Margin { get; set; } = 20;
+		protected float Margin { get; set; } = 80;
 
 		protected float TextMargin { get; set; } = 10;
 
@@ -78,77 +78,77 @@ namespace SpatialFocus.XamarinForms.GaugeView
 						return "N";
 					}
 
-					if (degree == (1.0 * unit.Max) / 16)
+					if (degree == 1.0 * unit.Max / 16)
 					{
 						return "NNE";
 					}
 
-					if (degree == (2.0 * unit.Max) / 16)
+					if (degree == 2.0 * unit.Max / 16)
 					{
 						return "NE";
 					}
 
-					if (degree == (3.0 * unit.Max) / 16)
+					if (degree == 3.0 * unit.Max / 16)
 					{
 						return "ENE";
 					}
 
-					if (degree == (4.0 * unit.Max) / 16)
+					if (degree == 4.0 * unit.Max / 16)
 					{
 						return "E";
 					}
 
-					if (degree == (5.0 * unit.Max) / 16)
+					if (degree == 5.0 * unit.Max / 16)
 					{
 						return "ESE";
 					}
 
-					if (degree == (6.0 * unit.Max) / 16)
+					if (degree == 6.0 * unit.Max / 16)
 					{
 						return "SE";
 					}
 
-					if (degree == (7.0 * unit.Max) / 16)
+					if (degree == 7.0 * unit.Max / 16)
 					{
 						return "SSE";
 					}
 
-					if (degree == (8.0 * unit.Max) / 16)
+					if (degree == 8.0 * unit.Max / 16)
 					{
 						return "S";
 					}
 
-					if (degree == (9.0 * unit.Max) / 16)
+					if (degree == 9.0 * unit.Max / 16)
 					{
 						return "SSW";
 					}
 
-					if (degree == (10.0 * unit.Max) / 16)
+					if (degree == 10.0 * unit.Max / 16)
 					{
 						return "SW";
 					}
 
-					if (degree == (11.0 * unit.Max) / 16)
+					if (degree == 11.0 * unit.Max / 16)
 					{
 						return "WSW";
 					}
 
-					if (degree == (12.0 * unit.Max) / 16)
+					if (degree == 12.0 * unit.Max / 16)
 					{
 						return "W";
 					}
 
-					if (degree == (13.0 * unit.Max) / 16)
+					if (degree == 13.0 * unit.Max / 16)
 					{
 						return "WNW";
 					}
 
-					if (degree == (14.0 * unit.Max) / 16)
+					if (degree == 14.0 * unit.Max / 16)
 					{
 						return "NW";
 					}
 
-					if (degree == (15.0 * unit.Max) / 16)
+					if (degree == 15.0 * unit.Max / 16)
 					{
 						return "NNW";
 					}
@@ -210,23 +210,12 @@ namespace SpatialFocus.XamarinForms.GaugeView
 
 			canvas.Clear();
 
-			double startValue = Value - (DisplayRange / 2);
-			double endValue = (Value + (DisplayRange / 2)).Previous(PartitionSize);
+			double startValue = Value - DisplayRange / 2;
+			double endValue = (Value + DisplayRange / 2).Previous(PartitionSize);
 
 			double currentValue = startValue.Next(PartitionSize);
 
 			float textSize = CalculateTextSize();
-
-			double? difference = DisplayDirectionArrow?.Invoke(Value, TargetValue);
-
-			if (difference.HasValue && difference < -DisplayRange / 2)
-			{
-				DrawText(canvas, info.Width - 20, "=>", textSize);
-			}
-			else if (difference.HasValue && difference > DisplayRange / 2)
-			{
-				DrawText(canvas, 20, "<=", textSize);
-			}
 
 			do
 			{
@@ -253,6 +242,8 @@ namespace SpatialFocus.XamarinForms.GaugeView
 			{
 				canvas.DrawLine(textSize + TextMargin, Margin, textSize + TextMargin, info.Height - Margin, LineStyle);
 			}
+
+			DrawDirectionArrow(canvas, info, textSize);
 		}
 
 		private float CalculateTextSize()
@@ -265,21 +256,62 @@ namespace SpatialFocus.XamarinForms.GaugeView
 			return textSize;
 		}
 
+		private void DrawDirectionArrow(SKCanvas canvas, SKImageInfo info, float textSize)
+		{
+			if (DisplayDirectionArrow == null) return;
+
+			double difference = DisplayDirectionArrow.Invoke(Value, TargetValue);
+
+			if (difference < -DisplayRange / 2)
+			{
+				SKPath path = new SKPath();
+
+				path.MoveTo(info.Width - 60, (0.5f * info.Height) + 40);
+				path.LineTo(info.Width, 0.5f * info.Height);
+				path.LineTo(info.Width - 60, (0.5f * info.Height) - 40);
+				path.Close();
+
+				// Create two SKPaint objects
+				using SKPaint strokePaint = new SKPaint { Style = SKPaintStyle.Stroke, Color = SKColors.White, StrokeWidth = 4, IsAntialias = true };
+				using SKPaint fillPaint = new SKPaint { Style = SKPaintStyle.Fill, Color = Color.ToSKColor(), };
+
+				// Fill and stroke the path
+				canvas.DrawPath(path, fillPaint);
+				canvas.DrawPath(path, strokePaint);
+			}
+			else if (difference > DisplayRange / 2)
+			{
+				SKPath path = new SKPath();
+
+				path.MoveTo(0 + 60, (0.5f * info.Height) + 40);
+				path.LineTo(0, 0.5f * info.Height);
+				path.LineTo(0 + 60, (0.5f * info.Height) - 40);
+				path.Close();
+
+				// Create two SKPaint objects
+				using SKPaint strokePaint = new SKPaint { Style = SKPaintStyle.Stroke, Color = SKColors.White, StrokeWidth = 4, IsAntialias = true };
+				using SKPaint fillPaint = new SKPaint { Style = SKPaintStyle.Fill, Color = Color.ToSKColor(), };
+
+				// Fill and stroke the path
+				canvas.DrawPath(path, fillPaint);
+				canvas.DrawPath(path, strokePaint);
+			}
+		}
+
 		private void DrawPartition(SKCanvas canvas, SKImageInfo info, float textSize, double startValue, double endValue,
 			double currentValue, bool highlight = false)
 		{
-			double unitDisplaySize =
-				((Orientation == GaugeOrientation.Horizontal ? info.Width : info.Height) - (Margin * 2)) / DisplayRange;
+			double unitDisplaySize = ((Orientation == GaugeOrientation.Horizontal ? info.Width : info.Height) - Margin * 2) / DisplayRange;
 
 			float position;
 
 			if (Orientation == GaugeOrientation.Horizontal)
 			{
-				position = (float)(Margin + ((currentValue - startValue) * unitDisplaySize));
+				position = (float)(Margin + (currentValue - startValue) * unitDisplaySize);
 			}
 			else
 			{
-				position = (float)(Margin + ((endValue - currentValue) * unitDisplaySize));
+				position = (float)(Margin + (endValue - currentValue) * unitDisplaySize);
 			}
 
 			if (highlight)
@@ -337,7 +369,7 @@ namespace SpatialFocus.XamarinForms.GaugeView
 			}
 			else
 			{
-				canvas.DrawText(text, (textBounds.Left * -1) + (reservedSize - textBounds.Width), position - textBounds.MidY, TextStyle);
+				canvas.DrawText(text, textBounds.Left * -1 + (reservedSize - textBounds.Width), position - textBounds.MidY, TextStyle);
 			}
 		}
 	}
