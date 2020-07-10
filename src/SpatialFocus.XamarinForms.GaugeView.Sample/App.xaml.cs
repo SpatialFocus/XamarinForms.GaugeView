@@ -1,28 +1,30 @@
-﻿using System;
-using Xamarin.Forms;
-using Xamarin.Forms.Xaml;
+﻿// <copyright file="App.xaml.cs" company="Spatial Focus GmbH">
+// Copyright (c) Spatial Focus GmbH. All rights reserved.
+// </copyright>
 
 namespace SpatialFocus.XamarinForms.GaugeView.Sample
 {
-    public partial class App : Application
-    {
-        public App()
-        {
-            InitializeComponent();
+	using Xamarin.Forms;
 
-            MainPage = new MainPage();
-        }
+	public partial class App : Application
+	{
+		public App()
+		{
+			InitializeComponent();
 
-        protected override void OnStart()
-        {
-        }
+			MainPage = new MainPage();
+		}
 
-        protected override void OnSleep()
-        {
-        }
+		protected override void OnResume()
+		{
+		}
 
-        protected override void OnResume()
-        {
-        }
-    }
+		protected override void OnSleep()
+		{
+		}
+
+		protected override void OnStart()
+		{
+		}
+	}
 }

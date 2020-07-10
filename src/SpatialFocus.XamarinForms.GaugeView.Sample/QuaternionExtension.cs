@@ -1,9 +1,8 @@
-﻿// <copyright file="QuaternionExtension.shared.cs" company="Spatial Focus">
-// Copyright (c) Spatial Focus. All rights reserved.
-// Licensed under Proprietary license. See LICENSE file in the project root for full license information.
+﻿// <copyright file="QuaternionExtension.cs" company="Spatial Focus GmbH">
+// Copyright (c) Spatial Focus GmbH. All rights reserved.
 // </copyright>
 
-namespace Focus.Apps.Common.Sensor
+namespace SpatialFocus.XamarinForms.GaugeView.Sample
 {
 	using System;
 	using System.Numerics;
@@ -29,7 +28,7 @@ namespace Focus.Apps.Common.Sensor
 			};
 		}
 
-		private static double ToDegrees(this float rad) => rad / Math.PI * 180.0;
+		private static double ToDegrees(this float rad) => (rad / Math.PI) * 180.0;
 
 		// See https://github.com/xamarin/XobotOS/blob/master/android/upstream/android/hardware/SensorManager.java#L1987
 		private static float[] ToRotationMatrix(this Quaternion quaternion)

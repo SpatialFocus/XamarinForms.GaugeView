@@ -4,7 +4,6 @@
 
 namespace SpatialFocus.XamarinForms.GaugeView.Sample
 {
-	using Focus.Apps.Common.Sensor;
 	using Xamarin.Essentials;
 
 	public class MainPageViewModel
@@ -29,7 +28,7 @@ namespace SpatialFocus.XamarinForms.GaugeView.Sample
 			double headingInMils = euler.Yaw / 360 * 6400;
 			double elevationInMils = euler.Pitch * -1 / 360 * 6400;
 
-			HorizontalGauge.Value = headingInMils;
+			HorizontalGauge.Value = ((headingInMils % 6400) + 6400) % 6400;
 			VerticalGauge.Value = elevationInMils;
 		}
 	}

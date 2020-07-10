@@ -1,9 +1,8 @@
-﻿// <copyright file="Euler.shared.cs" company="Spatial Focus">
-// Copyright (c) Spatial Focus. All rights reserved.
-// Licensed under Proprietary license. See LICENSE file in the project root for full license information.
+﻿// <copyright file="Euler.cs" company="Spatial Focus GmbH">
+// Copyright (c) Spatial Focus GmbH. All rights reserved.
 // </copyright>
 
-namespace Focus.Apps.Common.Sensor
+namespace SpatialFocus.XamarinForms.GaugeView.Sample
 {
 	public class Euler
 	{

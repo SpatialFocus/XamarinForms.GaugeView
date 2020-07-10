@@ -1,33 +1,38 @@
-﻿using System;
-
-using Android.App;
-using Android.Content.PM;
-using Android.Runtime;
-using Android.Views;
-using Android.Widget;
-using Android.OS;
+﻿// <copyright file="MainActivity.cs" company="Spatial Focus GmbH">
+// Copyright (c) Spatial Focus GmbH. All rights reserved.
+// </copyright>
 
 namespace SpatialFocus.XamarinForms.GaugeView.Sample.Droid
 {
-    [Activity(Label = "SpatialFocus.XamarinForms.GaugeView.Sample", Icon = "@mipmap/icon", Theme = "@style/MainTheme", MainLauncher = true, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
-    public class MainActivity : global::Xamarin.Forms.Platform.Android.FormsAppCompatActivity
-    {
-        protected override void OnCreate(Bundle savedInstanceState)
-        {
-            TabLayoutResource = Resource.Layout.Tabbar;
-            ToolbarResource = Resource.Layout.Toolbar;
+	using Android.App;
+	using Android.Content.PM;
+	using Android.OS;
+	using Android.Runtime;
+	using Xamarin.Forms;
+	using Xamarin.Forms.Platform.Android;
+	using Platform = Xamarin.Essentials.Platform;
 
-            base.OnCreate(savedInstanceState);
+	[Activity(Label = "SpatialFocus.XamarinForms.GaugeView.Sample", Icon = "@mipmap/icon", Theme = "@style/MainTheme", MainLauncher = true,
+		ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
+	public class MainActivity : FormsAppCompatActivity
+	{
+		public override void OnRequestPermissionsResult(int requestCode, string[] permissions, [GeneratedEnum] Permission[] grantResults)
+		{
+			Platform.OnRequestPermissionsResult(requestCode, permissions, grantResults);
 
-            Xamarin.Essentials.Platform.Init(this, savedInstanceState);
-            global::Xamarin.Forms.Forms.Init(this, savedInstanceState);
-            LoadApplication(new App());
-        }
-        public override void OnRequestPermissionsResult(int requestCode, string[] permissions, [GeneratedEnum] Android.Content.PM.Permission[] grantResults)
-        {
-            Xamarin.Essentials.Platform.OnRequestPermissionsResult(requestCode, permissions, grantResults);
+			base.OnRequestPermissionsResult(requestCode, permissions, grantResults);
+		}
 
-            base.OnRequestPermissionsResult(requestCode, permissions, grantResults);
-        }
-    }
+		protected override void OnCreate(Bundle savedInstanceState)
+		{
+			FormsAppCompatActivity.TabLayoutResource = Resource.Layout.Tabbar;
+			FormsAppCompatActivity.ToolbarResource = Resource.Layout.Toolbar;
+
+			base.OnCreate(savedInstanceState);
+
+			Platform.Init(this, savedInstanceState);
+			Forms.Init(this, savedInstanceState);
+			LoadApplication(new App());
+		}
+	}
 }
