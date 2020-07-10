@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+	xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	xmlns:gv="clr-namespace:SpatialFocus.XamarinForms.GaugeView;assembly=SpatialFocus.XamarinForms.GaugeView"
+	mc:Ignorable="d" x:Class="SpatialFocus.XamarinForms.GaugeView.Sample.MainPage">
+
+	<StackLayout Spacing="0">
+		<!-- Place new controls here -->
+		<gv:Gauge HorizontalOptions="Fill" HeightRequest="50" BindingContext="{Binding HorizontalGauge}" BackgroundColor="#f0e0e0" />
+		<StackLayout Orientation="Horizontal" VerticalOptions="FillAndExpand" HorizontalOptions="Center" BackgroundColor="#e0f0e0" >
+			<gv:Gauge WidthRequest="80" VerticalOptions="Fill" BindingContext="{Binding VerticalGauge}" />
+		</StackLayout>
+	</StackLayout>
+
+</ContentPage>

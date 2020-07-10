@@ -19,6 +19,9 @@ namespace SpatialFocus.XamarinForms.GaugeView
 		{
 			PaintCommand = new DelegateCommand<PaintCommandParameter>(Paint);
 
+			ClearStyle = new SKPaint() { Color = SKColors.Empty, BlendMode = SKBlendMode.Src };
+			DirectionArrowStyle = new SKPaint { Style = SKPaintStyle.Fill, Color = Color.ToSKColor(), IsAntialias = true };
+			PrecisionIndicatorStyle = new SKPaint() { Color = PrecisionIndicatorColor.ToSKColor(), BlendMode = SKBlendMode.DstOver };
 			HighlightedLineStyle = new SKPaint { Style = SKPaintStyle.Stroke, Color = HighlightedColor.ToSKColor(), StrokeWidth = 10 };
 			LineStyle = new SKPaint { Style = SKPaintStyle.Stroke, Color = Color.ToSKColor(), StrokeWidth = 5 };
 			TextStyle = new SKPaint { TextSize = 40.0f, IsAntialias = true, IsStroke = false };
@@ -44,6 +47,10 @@ namespace SpatialFocus.XamarinForms.GaugeView
 
 		public double PartitionSize { get; set; } = 0.5;
 
+		public double Precision { get; set; }
+
+		public Color PrecisionIndicatorColor { get; set; } = Color.LightPink;
+
 		public Func<double, string> SetLabel { get; set; }
 
 		public double TargetValue { get; set; }
@@ -52,11 +59,17 @@ namespace SpatialFocus.XamarinForms.GaugeView
 
 		public double Value { get; set; }
 
+		protected SKPaint ClearStyle { get; set; }
+
+		protected SKPaint DirectionArrowStyle { get; set; }
+
 		protected SKPaint HighlightedLineStyle { get; set; }
 
 		protected SKPaint LineStyle { get; set; }
 
 		protected float Margin { get; set; } = 20;
+
+		protected SKPaint PrecisionIndicatorStyle { get; set; }
 
 		protected float TextMargin { get; set; } = 10;
 
@@ -68,6 +81,7 @@ namespace SpatialFocus.XamarinForms.GaugeView
 			{
 				Unit = unit,
 				DisplayDirectionArrow = unit.NormalizedDifference,
+				Precision = unit.Max * 0.005,
 				SetLabel = x =>
 				{
 					double degree = (x + unit.Max) % unit.Max;
@@ -78,77 +92,77 @@ namespace SpatialFocus.XamarinForms.GaugeView
 						return "N";
 					}
 
-					if (degree == (1.0 * unit.Max) / 16)
+					if (degree == 1.0 * unit.Max / 16)
 					{
 						return "NNE";
 					}
 
-					if (degree == (2.0 * unit.Max) / 16)
+					if (degree == 2.0 * unit.Max / 16)
 					{
 						return "NE";
 					}
 
-					if (degree == (3.0 * unit.Max) / 16)
+					if (degree == 3.0 * unit.Max / 16)
 					{
 						return "ENE";
 					}
 
-					if (degree == (4.0 * unit.Max) / 16)
+					if (degree == 4.0 * unit.Max / 16)
 					{
 						return "E";
 					}
 
-					if (degree == (5.0 * unit.Max) / 16)
+					if (degree == 5.0 * unit.Max / 16)
 					{
 						return "ESE";
 					}
 
-					if (degree == (6.0 * unit.Max) / 16)
+					if (degree == 6.0 * unit.Max / 16)
 					{
 						return "SE";
 					}
 
-					if (degree == (7.0 * unit.Max) / 16)
+					if (degree == 7.0 * unit.Max / 16)
 					{
 						return "SSE";
 					}
 
-					if (degree == (8.0 * unit.Max) / 16)
+					if (degree == 8.0 * unit.Max / 16)
 					{
 						return "S";
 					}
 
-					if (degree == (9.0 * unit.Max) / 16)
+					if (degree == 9.0 * unit.Max / 16)
 					{
 						return "SSW";
 					}
 
-					if (degree == (10.0 * unit.Max) / 16)
+					if (degree == 10.0 * unit.Max / 16)
 					{
 						return "SW";
 					}
 
-					if (degree == (11.0 * unit.Max) / 16)
+					if (degree == 11.0 * unit.Max / 16)
 					{
 						return "WSW";
 					}
 
-					if (degree == (12.0 * unit.Max) / 16)
+					if (degree == 12.0 * unit.Max / 16)
 					{
 						return "W";
 					}
 
-					if (degree == (13.0 * unit.Max) / 16)
+					if (degree == 13.0 * unit.Max / 16)
 					{
 						return "WNW";
 					}
 
-					if (degree == (14.0 * unit.Max) / 16)
+					if (degree == 14.0 * unit.Max / 16)
 					{
 						return "NW";
 					}
 
-					if (degree == (15.0 * unit.Max) / 16)
+					if (degree == 15.0 * unit.Max / 16)
 					{
 						return "NNW";
 					}
@@ -166,6 +180,8 @@ namespace SpatialFocus.XamarinForms.GaugeView
 			return new GaugeViewModel()
 			{
 				Unit = unit,
+				DisplayDirectionArrow = unit.NormalizedDifference,
+				Precision = unit.Max * 0.005,
 				Orientation = GaugeOrientation.Vertical,
 				SetLabel = x =>
 				{
@@ -185,11 +201,17 @@ namespace SpatialFocus.XamarinForms.GaugeView
 		protected void OnColorChanged()
 		{
 			LineStyle = new SKPaint { Style = SKPaintStyle.Stroke, Color = Color.ToSKColor(), StrokeWidth = 5 };
+			DirectionArrowStyle = new SKPaint { Style = SKPaintStyle.Fill, Color = Color.ToSKColor(), IsAntialias = true };
 		}
 
 		protected void OnHighlightedColorChanged()
 		{
 			HighlightedLineStyle = new SKPaint { Style = SKPaintStyle.Stroke, Color = HighlightedColor.ToSKColor(), StrokeWidth = 10 };
+		}
+
+		protected void OnPrecisionIndicatorColorChanged()
+		{
+			PrecisionIndicatorStyle = new SKPaint() { Color = PrecisionIndicatorColor.ToSKColor(), BlendMode = SKBlendMode.DstOver };
 		}
 
 		protected void OnValueChanged()
@@ -210,23 +232,12 @@ namespace SpatialFocus.XamarinForms.GaugeView
 
 			canvas.Clear();
 
-			double startValue = Value - (DisplayRange / 2);
-			double endValue = (Value + (DisplayRange / 2)).Previous(PartitionSize);
+			double startValue = Value - DisplayRange / 2;
+			double endValue = (Value + DisplayRange / 2).Previous(PartitionSize);
 
 			double currentValue = startValue.Next(PartitionSize);
 
 			float textSize = CalculateTextSize();
-
-			double? difference = DisplayDirectionArrow?.Invoke(Value, TargetValue);
-
-			if (difference.HasValue && difference < -DisplayRange / 2)
-			{
-				DrawText(canvas, info.Width - 20, "=>", textSize);
-			}
-			else if (difference.HasValue && difference > DisplayRange / 2)
-			{
-				DrawText(canvas, 20, "<=", textSize);
-			}
 
 			do
 			{
@@ -235,6 +246,8 @@ namespace SpatialFocus.XamarinForms.GaugeView
 				currentValue = (currentValue + PartitionSize).Nearest(PartitionSize);
 			}
 			while (currentValue <= endValue);
+
+			DrawPrecisionIndicator(canvas, info, textSize, startValue, endValue);
 
 			if (startValue <= TargetValue && TargetValue <= endValue)
 			{
@@ -251,8 +264,10 @@ namespace SpatialFocus.XamarinForms.GaugeView
 			}
 			else
 			{
-				canvas.DrawLine(textSize + TextMargin, Margin, textSize + TextMargin, info.Height - Margin, LineStyle);
+				canvas.DrawLine(info.Width * 0.5f, Margin, info.Width * 0.5f, info.Height - Margin, LineStyle);
 			}
+
+			DrawDirectionArrow(canvas, info, textSize);
 		}
 
 		private float CalculateTextSize()
@@ -265,21 +280,86 @@ namespace SpatialFocus.XamarinForms.GaugeView
 			return textSize;
 		}
 
+		private void DrawDirectionArrow(SKCanvas canvas, SKImageInfo info, float textSize)
+		{
+			if (DisplayDirectionArrow == null) return;
+
+			double difference = DisplayDirectionArrow.Invoke(Value, TargetValue);
+
+			if (Orientation == GaugeOrientation.Horizontal)
+			{
+				if (difference < -DisplayRange / 2)
+				{
+					canvas.DrawRect(new SKRect(info.Width - 70, 0, info.Width, info.Height), ClearStyle);
+
+					SKPath path = new SKPath();
+
+					path.MoveTo(info.Width - 60, 0.5f * info.Height + 40);
+					path.LineTo(info.Width, 0.5f * info.Height);
+					path.LineTo(info.Width - 60, 0.5f * info.Height - 40);
+					path.Close();
+
+					canvas.DrawPath(path, DirectionArrowStyle);
+				}
+				else if (difference > DisplayRange / 2)
+				{
+					canvas.DrawRect(new SKRect(0, 0, 70, info.Height), ClearStyle);
+
+					SKPath path = new SKPath();
+
+					path.MoveTo(0 + 60, 0.5f * info.Height + 40);
+					path.LineTo(0, 0.5f * info.Height);
+					path.LineTo(0 + 60, 0.5f * info.Height - 40);
+					path.Close();
+
+					canvas.DrawPath(path, DirectionArrowStyle);
+				}
+			}
+			else
+			{
+				if (difference < -DisplayRange / 2)
+				{
+					canvas.DrawRect(new SKRect(0, 0, 0.5f * info.Width - 5, 50), ClearStyle);
+
+					SKPath path = new SKPath();
+
+					path.MoveTo(0.25f * info.Width + 30, 0 + 50);
+					path.LineTo(0.25f * info.Width, 0);
+					path.LineTo(0.25f * info.Width - 30, 0 + 50);
+					path.Close();
+
+					canvas.DrawPath(path, DirectionArrowStyle);
+				}
+				else if (difference > DisplayRange / 2)
+				{
+					canvas.DrawRect(new SKRect(0, info.Height - 50, 0.5f * info.Width - 5, info.Height), ClearStyle);
+
+					SKPath path = new SKPath();
+
+					path.MoveTo(0.25f * info.Width + 30, info.Height - 50);
+					path.LineTo(0.25f * info.Width, info.Height);
+					path.LineTo(0.25f * info.Width - 30, info.Height - 50);
+					path.Close();
+
+					canvas.DrawPath(path, DirectionArrowStyle);
+				}
+			}
+		}
+
 		private void DrawPartition(SKCanvas canvas, SKImageInfo info, float textSize, double startValue, double endValue,
 			double currentValue, bool highlight = false)
 		{
-			double unitDisplaySize =
-				((Orientation == GaugeOrientation.Horizontal ? info.Width : info.Height) - (Margin * 2)) / DisplayRange;
+			double unitDisplaySize = ((Orientation == GaugeOrientation.Horizontal ? info.Width : info.Height) - Margin * 2) / DisplayRange;
 
 			float position;
 
 			if (Orientation == GaugeOrientation.Horizontal)
 			{
-				position = (float)(Margin + ((currentValue - startValue) * unitDisplaySize));
+				position = (float)(Margin + (currentValue - startValue) * unitDisplaySize);
 			}
 			else
 			{
-				position = (float)(Margin + ((endValue - currentValue) * unitDisplaySize));
+				position = (float)(Margin + (endValue - currentValue) * unitDisplaySize);
 			}
 
 			if (highlight)
@@ -290,7 +370,7 @@ namespace SpatialFocus.XamarinForms.GaugeView
 				}
 				else
 				{
-					canvas.DrawLine(textSize + TextMargin, position, info.Width, position, HighlightedLineStyle);
+					canvas.DrawLine(info.Width * 0.5f, position, info.Width, position, HighlightedLineStyle);
 				}
 			}
 			else if (currentValue.Emphasize(PartitionSize, PartitionGroupSize))
@@ -301,7 +381,7 @@ namespace SpatialFocus.XamarinForms.GaugeView
 				}
 				else
 				{
-					canvas.DrawLine(textSize + TextMargin, position, info.Width, position, LineStyle);
+					canvas.DrawLine(info.Width * 0.5f, position, info.Width, position, LineStyle);
 				}
 			}
 			else
@@ -313,8 +393,8 @@ namespace SpatialFocus.XamarinForms.GaugeView
 				}
 				else
 				{
-					canvas.DrawLine(textSize + TextMargin, position,
-						textSize + TextMargin + (float)((info.Width - textSize - TextMargin) * 0.66), position, LineStyle);
+					canvas.DrawLine(info.Width * 0.5f, position, (float)(info.Width * 0.5f) + (float)(info.Width * 0.33), position,
+						LineStyle);
 				}
 			}
 
@@ -322,11 +402,46 @@ namespace SpatialFocus.XamarinForms.GaugeView
 
 			if (!string.IsNullOrEmpty(label))
 			{
-				DrawText(canvas, position, label, textSize);
+				DrawText(canvas, info, position, label, textSize);
 			}
 		}
 
-		private void DrawText(SKCanvas canvas, float position, string text, float reservedSize)
+		private void DrawPrecisionIndicator(SKCanvas canvas, SKImageInfo info, float textSize, double startValue, double endValue)
+		{
+			double unitDisplaySize = ((Orientation == GaugeOrientation.Horizontal ? info.Width : info.Height) - Margin * 2) / DisplayRange;
+			float s1;
+			float s2;
+
+			if (Precision == 0)
+			{
+				return;
+			}
+
+			if (Orientation == GaugeOrientation.Horizontal)
+			{
+				s1 = (float)(Margin + (TargetValue - Precision - startValue) * unitDisplaySize);
+				s2 = (float)(Margin + (TargetValue + Precision - startValue) * unitDisplaySize);
+			}
+			else
+			{
+				s1 = (float)(Margin + (endValue - TargetValue - Precision) * unitDisplaySize);
+				s2 = (float)(Margin + (endValue - TargetValue + Precision) * unitDisplaySize);
+			}
+
+			if (Orientation == GaugeOrientation.Horizontal)
+			{
+				canvas.DrawRect(
+					new SKRect(s1, textSize + TextMargin, s2,
+						textSize + TextMargin + (float)((info.Height - textSize - TextMargin) * 0.66)), PrecisionIndicatorStyle);
+			}
+			else
+			{
+				canvas.DrawRect(new SKRect(info.Width * 0.5f, s1, (float)(info.Width * 0.5f) + (float)(info.Width * 0.33), s2),
+					PrecisionIndicatorStyle);
+			}
+		}
+
+		private void DrawText(SKCanvas canvas, SKImageInfo info, float position, string text, float reservedSize)
 		{
 			SKRect textBounds = default;
 			TextStyle.MeasureText(text, ref textBounds);
@@ -337,7 +452,8 @@ namespace SpatialFocus.XamarinForms.GaugeView
 			}
 			else
 			{
-				canvas.DrawText(text, (textBounds.Left * -1) + (reservedSize - textBounds.Width), position - textBounds.MidY, TextStyle);
+				canvas.DrawText(text, (float)(info.Width * 0.5 - textBounds.Left - textBounds.Width - TextMargin),
+					position - textBounds.MidY, TextStyle);
 			}
 		}
 	}
