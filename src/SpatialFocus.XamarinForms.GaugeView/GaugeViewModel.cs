@@ -47,7 +47,7 @@ namespace SpatialFocus.XamarinForms.GaugeView
 
 		public double PartitionSize { get; set; } = 0.5;
 
-		public double Precision { get; set; }
+		public double? Precision { get; set; }
 
 		public Color PrecisionIndicatorColor { get; set; } = Color.LightPink;
 
@@ -232,8 +232,8 @@ namespace SpatialFocus.XamarinForms.GaugeView
 
 			canvas.Clear();
 
-			double startValue = Value - DisplayRange / 2;
-			double endValue = (Value + DisplayRange / 2).Previous(PartitionSize);
+			double startValue = Value - (DisplayRange / 2);
+			double endValue = (Value + (DisplayRange / 2)).Previous(PartitionSize);
 
 			double currentValue = startValue.Next(PartitionSize);
 
@@ -249,7 +249,7 @@ namespace SpatialFocus.XamarinForms.GaugeView
 
 			DrawPrecisionIndicator(canvas, info, textSize, startValue, endValue);
 
-			if (startValue <= TargetValue && TargetValue <= endValue)
+			if ((startValue <= TargetValue && TargetValue <= endValue) || (startValue <= TargetValue + Unit.Max && TargetValue + Unit.Max <= endValue))
 			{
 				DrawPartition(canvas, info, textSize, startValue, endValue, TargetValue, true);
 			}
@@ -267,7 +267,7 @@ namespace SpatialFocus.XamarinForms.GaugeView
 				canvas.DrawLine(info.Width * 0.5f, Margin, info.Width * 0.5f, info.Height - Margin, LineStyle);
 			}
 
-			DrawDirectionArrow(canvas, info, textSize);
+			DrawDirectionArrow(canvas, info);
 		}
 
 		private float CalculateTextSize()
@@ -280,9 +280,12 @@ namespace SpatialFocus.XamarinForms.GaugeView
 			return textSize;
 		}
 
-		private void DrawDirectionArrow(SKCanvas canvas, SKImageInfo info, float textSize)
+		private void DrawDirectionArrow(SKCanvas canvas, SKImageInfo info)
 		{
-			if (DisplayDirectionArrow == null) return;
+			if (DisplayDirectionArrow == null)
+			{
+				return;
+			}
 
 			double difference = DisplayDirectionArrow.Invoke(Value, TargetValue);
 
@@ -355,7 +358,7 @@ namespace SpatialFocus.XamarinForms.GaugeView
 
 			if (Orientation == GaugeOrientation.Horizontal)
 			{
-				position = (float)(Margin + (currentValue - startValue) * unitDisplaySize);
+				position = (float)(Margin + (Unit.NormalizedDifference(currentValue, startValue) * unitDisplaySize));
 			}
 			else
 			{
@@ -402,30 +405,42 @@ namespace SpatialFocus.XamarinForms.GaugeView
 
 			if (!string.IsNullOrEmpty(label))
 			{
-				DrawText(canvas, info, position, label, textSize);
+				DrawText(canvas, info, position, label);
 			}
 		}
 
 		private void DrawPrecisionIndicator(SKCanvas canvas, SKImageInfo info, float textSize, double startValue, double endValue)
 		{
-			double unitDisplaySize = ((Orientation == GaugeOrientation.Horizontal ? info.Width : info.Height) - Margin * 2) / DisplayRange;
-			float s1;
-			float s2;
-
-			if (Precision == 0)
+			if (!Precision.HasValue)
 			{
 				return;
 			}
 
+			double unitDisplaySize =
+				((Orientation == GaugeOrientation.Horizontal ? info.Width : info.Height) - (Margin * 2)) / DisplayRange;
+			float s1;
+			float s2;
+
 			if (Orientation == GaugeOrientation.Horizontal)
 			{
-				s1 = (float)(Margin + (TargetValue - Precision - startValue) * unitDisplaySize);
-				s2 = (float)(Margin + (TargetValue + Precision - startValue) * unitDisplaySize);
+				var realStartValue = startValue;
+
+				if (TargetValue - startValue > Unit.Max / 2)
+				{
+					realStartValue = startValue + Unit.Max;
+				}
+				else if (TargetValue - startValue < -Unit.Max / 2)
+				{
+					realStartValue = startValue - Unit.Max;
+				}
+
+				s1 = (float)(Margin + ((TargetValue - Precision - realStartValue) * unitDisplaySize));
+				s2 = (float)(Margin + (((TargetValue + Precision) - realStartValue) * unitDisplaySize));
 			}
 			else
 			{
-				s1 = (float)(Margin + (endValue - TargetValue - Precision) * unitDisplaySize);
-				s2 = (float)(Margin + (endValue - TargetValue + Precision) * unitDisplaySize);
+				s1 = (float)(Margin + ((endValue - TargetValue - Precision) * unitDisplaySize));
+				s2 = (float)(Margin + (((endValue - TargetValue) + Precision) * unitDisplaySize));
 			}
 
 			if (Orientation == GaugeOrientation.Horizontal)
@@ -441,7 +456,7 @@ namespace SpatialFocus.XamarinForms.GaugeView
 			}
 		}
 
-		private void DrawText(SKCanvas canvas, SKImageInfo info, float position, string text, float reservedSize)
+		private void DrawText(SKCanvas canvas, SKImageInfo info, float position, string text)
 		{
 			SKRect textBounds = default;
 			TextStyle.MeasureText(text, ref textBounds);
