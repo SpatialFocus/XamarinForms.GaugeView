@@ -216,7 +216,7 @@ namespace SpatialFocus.XamarinForms.GaugeView
 
 		protected void OnValueChanged()
 		{
-			InvalidateSurfaceCommand?.Execute(null);
+			Device.BeginInvokeOnMainThread(() => InvalidateSurfaceCommand?.Execute(null));
 		}
 
 		internal void Paint(PaintCommandParameter parameter)
